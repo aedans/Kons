@@ -2,4 +2,4 @@
 
 Kotlin linked list implementation using lazily evaluated cons cells.
 
-Maven: `io.github.aedans:kotlin-cons`
+[Bintray](https://bintray.com/aedans/maven/Kotlin-Cons])

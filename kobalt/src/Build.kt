@@ -1,3 +1,5 @@
+import com.beust.kobalt.plugin.packaging.assemble
+import com.beust.kobalt.plugin.publish.autoGitTag
 import com.beust.kobalt.plugin.publish.bintray
 import com.beust.kobalt.project
 
@@ -14,6 +16,11 @@ val kotlinCons = project {
 
     dependenciesTest {
         compile("org.testng:testng:6.11")
+    }
+
+    assemble {
+        jar {
+        }
     }
 
     bintray {
