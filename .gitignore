@@ -1,0 +1,6 @@
+.idea
+.kobalt
+kobaltBuild
+*.iml
+local.properties
+kobalt/out
