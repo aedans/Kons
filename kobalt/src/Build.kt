@@ -1,5 +1,4 @@
 import com.beust.kobalt.plugin.packaging.assemble
-import com.beust.kobalt.plugin.publish.autoGitTag
 import com.beust.kobalt.plugin.publish.bintray
 import com.beust.kobalt.project
 

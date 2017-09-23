@@ -1,4 +1,4 @@
-package io.github.aedans.lists
+package io.github.aedans.cons
 
 /**
  * The empty cons list, used as the terminator for all cons lists.

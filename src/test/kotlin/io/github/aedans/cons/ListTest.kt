@@ -1,4 +1,4 @@
-package io.github.aedans.lists
+package io.github.aedans.cons
 
 import org.testng.Assert
 import org.testng.annotations.Test

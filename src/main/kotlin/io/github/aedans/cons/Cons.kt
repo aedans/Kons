@@ -1,4 +1,4 @@
-package io.github.aedans.lists
+package io.github.aedans.cons
 
 /**
  * A linked list implementation using cons cells. While operations such as get and append are much slower than normal
