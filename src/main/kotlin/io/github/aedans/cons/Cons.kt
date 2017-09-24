@@ -17,13 +17,11 @@ interface Cons<out T> : Iterable<T> {
      * Mirror of List<T>.size: Int.
      */
     val size get() = run {
-        var size = 0
-        var it = this
-        while (it != Nil) {
-            size += 1
-            it = it.cdr
+        tailrec fun getSize(acc: Int, cons: Cons<T>): Int = when (cons) {
+            Nil -> acc
+            else -> getSize(acc + 1, cons.cdr)
         }
-        size
+        getSize(0, this)
     }
 
     /**
@@ -34,7 +32,7 @@ interface Cons<out T> : Iterable<T> {
             0 -> car
             else -> cdr.getUnsafe(i - 1)
         }
-        if (index < 0) throw IndexOutOfBoundsException() else getUnsafe(index)
+        if (index < 0) throw IndexOutOfBoundsException(index.toString()) else getUnsafe(index)
     }
 
     operator fun component1() = car
@@ -63,11 +61,7 @@ interface Cons<out T> : Iterable<T> {
 abstract class AbstractCons<out T> : Cons<T> {
     override fun toString() = joinToString(prefix = "[", postfix = "]")
     override fun equals(other: Any?) = other !== Nil && other is Cons<*> && other.car == car && other.cdr == cdr
-    override fun hashCode(): Int {
-        var result = car?.hashCode() ?: 0
-        result = 31 * result + cdr.hashCode()
-        return result
-    }
+    override fun hashCode() = (car?.hashCode() ?: 0).let { 31 * it + cdr.hashCode() }
 }
 
 /**

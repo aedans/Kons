@@ -23,6 +23,6 @@ class ListTest {
     fun stackSafe3() = generateCons(10000) { it + 1 }[10000].let {  }
     fun stackSafe4() {
         var it = 0
-        generateCons { it++ }[10000].let {  }
+        generateCons { it++ }[10000]
     }
 }
