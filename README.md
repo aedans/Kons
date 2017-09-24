@@ -1,5 +1,5 @@
 # Kotlin Cons
 
-Kotlin linked list implementation using lazily evaluated cons cells.
+[![Download](https://api.bintray.com/packages/aedans/maven/kotlin-cons/images/download.svg)](https://bintray.com/aedans/maven/kotlin-cons/_latestVersion) 
 
-[Bintray](https://bintray.com/aedans/maven/kotlin-cons)
+Kotlin linked list implementation using lazily evaluated cons cells.
