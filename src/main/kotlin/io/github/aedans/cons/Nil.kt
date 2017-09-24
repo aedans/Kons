@@ -7,4 +7,5 @@ object Nil : Cons<Nothing> {
     override val car get() = throw IndexOutOfBoundsException()
     override val cdr get() = throw IndexOutOfBoundsException()
     override fun iterator() = emptyList<Nothing>().iterator()
+    override fun toString() = "nil"
 }
