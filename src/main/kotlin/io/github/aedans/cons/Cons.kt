@@ -13,6 +13,33 @@ interface Cons<out T> : Iterable<T> {
     val car: T
     val cdr: Cons<T>
 
+    /**
+     * Mirror of List<T>.size: Int.
+     */
+    val size get() = run {
+        var size = 0
+        var it = this
+        while (it != Nil) {
+            size += 1
+            it = it.cdr
+        }
+        size
+    }
+
+    /**
+     * Mirror of List<T>.get(Int): T.
+     */
+    operator fun get(index: Int) = let {
+        tailrec fun Cons<T>.getUnsafe(i: Int): T = when (i) {
+            0 -> car
+            else -> cdr.getUnsafe(i - 1)
+        }
+        if (index < 0) throw IndexOutOfBoundsException() else getUnsafe(index)
+    }
+
+    operator fun component1() = car
+    operator fun component2() = cdr
+
     override fun iterator() = object : Iterator<T> {
         private var current = car
         private var next = cdr
@@ -41,33 +68,6 @@ abstract class AbstractCons<out T> : Cons<T> {
         result = 31 * result + cdr.hashCode()
         return result
     }
-}
-
-@Suppress("NOTHING_TO_INLINE") inline operator fun <T> Cons<T>.component1() = car
-@Suppress("NOTHING_TO_INLINE") inline operator fun <T> Cons<T>.component2() = cdr
-
-/**
- * Mirror of List<T>.size: Int.
- */
-val Cons<*>.size get() = run {
-    var size = 0
-    var it = this
-    while (it != Nil) {
-        size += 1
-        it = it.cdr
-    }
-    size
-}
-
-/**
- * Mirror of List<T>.get(Int): T.
- */
-operator fun <T> Cons<T>.get(index: Int) = run {
-    tailrec fun Cons<T>.getUnsafe(i: Int): T = when (i) {
-        0 -> car
-        else -> cdr.getUnsafe(i - 1)
-    }
-    if (index < 0) throw IndexOutOfBoundsException() else getUnsafe(index)
 }
 
 /**
