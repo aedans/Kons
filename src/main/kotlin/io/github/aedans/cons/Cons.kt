@@ -19,17 +19,13 @@ interface Cons<out T> : Iterable<T> {
         private var hasNext = true
         override fun hasNext() = hasNext
         override fun next() = current.let {
-            when {
-                next == Nil -> {
-                    hasNext = false
-                    it
-                }
-                hasNext -> {
-                    current = next.car
-                    next = next.cdr
-                    it
-                }
-                else -> throw NoSuchElementException()
+            if (next == Nil) {
+                hasNext = false
+                it
+            } else {
+                current = next.car
+                next = next.cdr
+                it
             }
         }
     }

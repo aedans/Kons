@@ -3,10 +3,10 @@ import com.beust.kobalt.plugin.publish.bintray
 import com.beust.kobalt.project
 
 val kotlinCons = project {
-    name = "Kotlin-Cons"
+    name = "kotlin-cons"
     group = "io.github.aedans"
-    artifactId = "kotlin-cons"
-    version = "1.0"
+    artifactId = name
+    version = "1.0.0"
 
     dependencies {
         compile("org.jetbrains.kotlin:kotlin-runtime:1.1.2")
