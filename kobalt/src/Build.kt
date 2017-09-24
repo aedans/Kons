@@ -18,7 +18,7 @@ val kotlinCons = project {
     }
 
     assemble {
-        jar {
+        mavenJars {
         }
     }
 

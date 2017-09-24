@@ -21,12 +21,11 @@ interface Cons<out T> : Iterable<T> {
         override fun next() = current.let {
             if (next == Nil) {
                 hasNext = false
-                it
             } else {
                 current = next.car
                 next = next.cdr
-                it
             }
+            it
         }
     }
 }
