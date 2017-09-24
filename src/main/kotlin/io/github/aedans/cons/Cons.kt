@@ -47,6 +47,19 @@ abstract class AbstractCons<out T> : Cons<T> {
 @Suppress("NOTHING_TO_INLINE") inline operator fun <T> Cons<T>.component2() = cdr
 
 /**
+ * Mirror of List<T>.size: Int.
+ */
+val Cons<*>.size get() = run {
+    var size = 0
+    var it = this
+    while (it != Nil) {
+        size += 1
+        it = it.cdr
+    }
+    size
+}
+
+/**
  * Mirror of List<T>.get(Int): T.
  */
 operator fun <T> Cons<T>.get(index: Int) = run {

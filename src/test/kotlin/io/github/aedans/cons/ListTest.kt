@@ -10,6 +10,7 @@ class ListTest {
     fun toCons() = Assert.assertEquals(listOf(1, 2, 3).toCons(), 1 cons (2 cons (3 cons Nil)))
     fun consOf1() = Assert.assertEquals(consOf(1, 2, 3), 1 cons (2 cons (3 cons Nil)))
     fun consOf2() = Assert.assertEquals(consOf(), Nil)
+    fun size() = Assert.assertEquals((0 until 10000).toCons().size, 10000)
     fun infiniteLazyCons() = object : Iterator<Int> {
         var i = 0
         override fun hasNext() = true
