@@ -25,4 +25,8 @@ class ListTest {
         var it = 0
         generateCons { it++ }[10000]
     }
+    fun stackSafe5() = ((0 until 10000).toCons() + 10000)[10000].let {  }
+    fun stackSafe6() = (0..10000).toCons().contains(10000).let {  }
+    fun stackSafe7() = (0..10000).toCons().indexOf(10000).let {  }
+    fun stackSafe8() = (0..10000).toCons().lastIndexOf(10000).let {  }
 }

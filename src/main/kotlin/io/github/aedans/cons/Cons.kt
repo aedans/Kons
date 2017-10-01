@@ -9,14 +9,21 @@ package io.github.aedans.cons
  *
  * Unlike traditional lisp cons lists, this implementation can be lazy, and by extension infinite.
  */
-interface Cons<out T> : Iterable<T> {
+interface Cons<out T> : List<T> {
+    /**
+     * The head of the cons list.
+     */
     val car: T
-    val cdr: Cons<T>
 
     /**
-     * Mirror of List<T>.size: Int.
+     * The tail of the cons list.
      */
-    val size get() = run {
+    val cdr: Cons<T>
+
+    operator fun component1() = car
+    operator fun component2() = cdr
+
+    override val size get() = run {
         tailrec fun getSize(acc: Int, cons: Cons<T>): Int = when (cons) {
             Nil -> acc
             else -> getSize(acc + 1, cons.cdr)
@@ -24,19 +31,48 @@ interface Cons<out T> : Iterable<T> {
         getSize(0, this)
     }
 
-    /**
-     * Mirror of List<T>.get(Int): T.
-     */
-    operator fun get(index: Int) = let {
-        tailrec fun Cons<T>.getUnsafe(i: Int): T = when (i) {
+    override operator fun get(index: Int) = let {
+        tailrec fun Cons<T>.getGet(i: Int): T = when (i) {
             0 -> car
-            else -> cdr.getUnsafe(i - 1)
+            else -> cdr.getGet(i - 1)
         }
-        if (index < 0) throw IndexOutOfBoundsException(index.toString()) else getUnsafe(index)
+        if (index < 0) throw IndexOutOfBoundsException(index.toString()) else getGet(index)
     }
 
-    operator fun component1() = car
-    operator fun component2() = cdr
+    override fun contains(element: @UnsafeVariance T) = run {
+        tailrec fun getContains(cons: Cons<T>): Boolean = when {
+            cons == Nil -> false
+            cons.car == element -> true
+            else -> getContains(cons.cdr)
+        }
+        getContains(this)
+    }
+
+    override fun containsAll(elements: Collection<@UnsafeVariance T>) = elements.all { contains(it) }
+
+    override fun indexOf(element: @UnsafeVariance T) = run {
+        tailrec fun getIndexOf(acc: Int, cons: Cons<T>): Int = when {
+            cons == Nil -> -1
+            cons.car == element -> acc
+            else -> getIndexOf(acc + 1, cons.cdr)
+        }
+        getIndexOf(0, this)
+    }
+
+    override fun isEmpty() = this == Nil
+
+    override fun lastIndexOf(element: @UnsafeVariance T) = run {
+        tailrec fun getLastIndexOf(last: Int, acc: Int, cons: Cons<T>): Int = when {
+            cons == Nil -> last
+            cons.car == element -> getLastIndexOf(acc, acc + 1, cons.cdr)
+            else -> getLastIndexOf(last, acc + 1, cons.cdr)
+        }
+        getLastIndexOf(-1, 0, this)
+    }
+
+    override fun listIterator() = toList().listIterator()
+    override fun listIterator(index: Int) = toList().listIterator(index)
+    override fun subList(fromIndex: Int, toIndex: Int) = toList().subList(fromIndex, toIndex)
 
     override fun iterator() = object : Iterator<T> {
         private var current = car
@@ -80,6 +116,9 @@ infix fun <T> T.cons(cdr: () -> Cons<T>): Cons<T> = object : AbstractCons<T>() {
     override val cdr by lazy(cdr)
 }
 
+operator fun <T> T.plus(cons: Cons<T>) = this cons cons
+operator fun <T> T.plus(cons: () -> Cons<T>) = this cons cons
+
 /**
  * Mirror of List(Int, (Int) -> T): List<T>.
  */
@@ -113,6 +152,11 @@ fun <T> consOf(vararg t: T) = t.asIterable().toCons()
 fun consOf() = Nil
 
 /**
+ * Mirror of emptyList(): List<T>.
+ */
+fun emptyCons() = Nil
+
+/**
  * Lazily creates a cons list from an Iterable.
  */
 fun <T> Iterable<T>.toCons() = iterator().collectToCons()
@@ -124,3 +168,19 @@ fun <T> Iterator<T>.collectToCons(): Cons<T> = when {
     hasNext() -> next() cons { collectToCons() }
     else -> Nil
 }
+
+/**
+ * Appends a lazy element to a cons list.
+ */
+fun <T> Cons<T>.append(t: () -> T): Cons<T> = when (this) {
+    Nil -> t() cons Nil
+    else -> car cons { cdr.append(t) }
+}
+
+/**
+ * Appends an element to a cons list.
+ */
+fun <T> Cons<T>.append(t: T) = append { t }
+
+operator fun <T> Cons<T>.plus(t: () -> T) = append(t)
+operator fun <T> Cons<T>.plus(t: T) = append(t)
