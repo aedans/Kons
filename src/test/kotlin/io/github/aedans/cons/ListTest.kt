@@ -11,7 +11,19 @@ class ListTest {
     fun toCons() = Assert.assertEquals(listOf(1, 2, 3).toCons(), 1 cons (2 cons (3 cons Nil)))
     fun consOf1() = Assert.assertEquals(consOf(1, 2, 3), 1 cons (2 cons (3 cons Nil)))
     fun consOf2() = Assert.assertEquals(consOf(), Nil)
-    fun size() = Assert.assertEquals((0 until 10000).toCons().size, 10000)
+    fun size() = Assert.assertEquals((0 until 100).toCons().size, 100)
+    fun take() = Assert.assertEquals((0 until 105).take(100).size, 100)
+    fun cons() = Assert.assertEquals((0 until 100).toCons(), cons(100) { it })
+    fun generateCons1() = Assert.assertEquals(generateCons(0) { it + 1 }.take(100), (0 until 100).toCons())
+    fun generateCons2() = Assert.assertEquals({
+        var it = 0
+        generateCons { it++ }
+    }().take(100), (0 until 100).toCons())
+    fun contains1() = Assert.assertEquals((0..100).contains(100), true)
+    fun contains2() = Assert.assertEquals((0 until 100).contains(100), false)
+    fun indexOf1() = Assert.assertEquals((0..100).indexOf(100), 100)
+    fun indexOf2() = Assert.assertEquals((0 until 100).indexOf(100), -1)
+
     fun infiniteLazyCons() = object : Iterator<Int> {
         var i = 0
         override fun hasNext() = true
@@ -20,7 +32,7 @@ class ListTest {
 
     fun stackSafe1() = (0..10000).toCons()[10000].let {  }
     fun stackSafe2() = cons(10001) { it }[10000].let {  }
-    fun stackSafe3() = generateCons(10000) { it + 1 }[10000].let {  }
+    fun stackSafe3() = generateCons(0) { it + 1 }[10000].let {  }
     fun stackSafe4() {
         var it = 0
         generateCons { it++ }[10000]

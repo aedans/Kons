@@ -122,9 +122,15 @@ operator fun <T> T.plus(cons: () -> Cons<T>) = this cons cons
 /**
  * Mirror of List(Int, (Int) -> T): List<T>.
  */
-fun <T> cons(size: Int, init: (Int) -> T): Cons<T> = when (size) {
-    0 -> Nil
-    else -> init(size) cons { cons(size - 1, init) }
+fun <T> cons(size: Int, init: (Int) -> T) = run {
+    fun getCons(acc: Int): Cons<T> = when (acc) {
+        size -> Nil
+        else -> init(acc) cons { getCons(acc + 1) }
+    }
+    if (size < 0)
+        throw IllegalArgumentException("size: $size")
+    else
+        getCons(0)
 }
 
 /**
@@ -184,3 +190,11 @@ fun <T> Cons<T>.append(t: T) = append { t }
 
 operator fun <T> Cons<T>.plus(t: () -> T) = append(t)
 operator fun <T> Cons<T>.plus(t: T) = append(t)
+
+/**
+ * Mirror of Iterable<T>.take(i: Int): List<T>.
+ */
+fun <T> Cons<T>.take(i: Int): Cons<T> = when (i) {
+    0 -> Nil
+    else -> car cons { cdr.take(i - 1) }
+}
