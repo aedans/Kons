@@ -31,7 +31,7 @@ interface Cons<out T> : List<T> {
         getSize(0, this)
     }
 
-    override operator fun get(index: Int) = let {
+    override operator fun get(index: Int) = run {
         tailrec fun Cons<T>.getGet(i: Int): T = when (i) {
             0 -> car
             else -> cdr.getGet(i - 1)
@@ -190,6 +190,19 @@ fun <T> Cons<T>.append(t: T) = append { t }
 
 operator fun <T> Cons<T>.plus(t: () -> T) = append(t)
 operator fun <T> Cons<T>.plus(t: T) = append(t)
+
+/**
+ * Prepends an element to a lazy cons list.
+ */
+fun <T> Cons<T>.prependTo(cons: () -> Cons<T>): Cons<T> = when (this) {
+    Nil -> cons()
+    else -> car cons { cdr.prependTo(cons) }
+}
+
+/**
+ * Prepends an element to a cons list.
+ */
+fun <T> Cons<T>.prependTo(cons: Cons<T>) = prependTo { cons }
 
 /**
  * Mirror of Iterable<T>.take(i: Int): List<T>.
