@@ -7,7 +7,8 @@ import org.testng.annotations.Test
 class ListTest {
     fun toString1() = Assert.assertEquals((1 cons (2 cons (3 cons Nil))).toString(), "[1, 2, 3]")
     fun toString2() = Assert.assertEquals(1.cons { 2.cons { 3.cons { Nil } } }.toString(), "[1, 2, 3]")
-    fun toString3() = Assert.assertEquals(consOf().toString(), "nil")
+    fun toString3() = Assert.assertEquals(({ 1 } cons { { 2 } cons { { 3 } cons { Nil } } }).toString(), "[1, 2, 3]")
+    fun toString4() = Assert.assertEquals(consOf().toString(), "nil")
     fun toCons() = Assert.assertEquals(listOf(1, 2, 3).toCons(), 1 cons (2 cons (3 cons Nil)))
     fun consOf1() = Assert.assertEquals(consOf(1, 2, 3), 1 cons (2 cons (3 cons Nil)))
     fun consOf2() = Assert.assertEquals(consOf(), Nil)
@@ -23,8 +24,8 @@ class ListTest {
     fun contains2() = Assert.assertEquals((0 until 100).toCons().contains(100), false)
     fun indexOf1() = Assert.assertEquals((0..100).toCons().indexOf(100), 100)
     fun indexOf2() = Assert.assertEquals((0 until 100).toCons().indexOf(100), -1)
-    fun append() = Assert.assertEquals((0..100).toCons(), (0 until 100).toCons().append(100))
-    fun prepend() = Assert.assertEquals((0..100).toCons(), (0..50).toCons().prependTo((51..100).toCons()))
+    fun append() = Assert.assertEquals((0..100).toCons(), (0 until 100).toCons() append 100)
+    fun prepend() = Assert.assertEquals((0..100).toCons(), (0..50).toCons() prependTo (51..100).toCons())
 
     fun infiniteLazyCons() = object : Iterator<Int> {
         var i = 0
@@ -43,6 +44,6 @@ class ListTest {
     fun stackSafe6() = (0..10000).toCons().contains(10000).let {  }
     fun stackSafe7() = (0..10000).toCons().indexOf(10000).let {  }
     fun stackSafe8() = (0..10000).toCons().lastIndexOf(10000).let {  }
-    fun stackSafe9() = (0 until 10000).toCons().append(1)[10000].let {  }
-    fun stackSafe10() = (0..10000).toCons().prependTo((0..1).toCons())[10000].let {  }
+    fun stackSafe9() = ((0 until 10000).toCons() append 1)[10000].let {  }
+    fun stackSafe10() = ((0..10000).toCons() prependTo (0..1).toCons())[10000].let {  }
 }

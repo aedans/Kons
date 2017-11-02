@@ -116,6 +116,14 @@ infix fun <T> T.cons(cdr: () -> Cons<T>): Cons<T> = object : AbstractCons<T>() {
     override val cdr by lazy(cdr)
 }
 
+/**
+ * Creates a cons cell from receiver and cdr. Both are evaluated lazily.
+ */
+infix fun <T> (() -> T).cons(cdr: () -> Cons<T>): Cons<T> = object : AbstractCons<T>() {
+    override val car by lazy(this@cons)
+    override val cdr by lazy(cdr)
+}
+
 operator fun <T> T.plus(cons: Cons<T>) = this cons cons
 operator fun <T> T.plus(cons: () -> Cons<T>) = this cons cons
 
@@ -178,7 +186,7 @@ fun <T> Iterator<T>.collectToCons(): Cons<T> = when {
 /**
  * Appends a lazy element to a cons list.
  */
-fun <T> Cons<T>.append(t: () -> T): Cons<T> = when (this) {
+infix fun <T> Cons<T>.append(t: () -> T): Cons<T> = when (this) {
     Nil -> t() cons Nil
     else -> car cons { cdr.append(t) }
 }
@@ -186,7 +194,7 @@ fun <T> Cons<T>.append(t: () -> T): Cons<T> = when (this) {
 /**
  * Appends an element to a cons list.
  */
-fun <T> Cons<T>.append(t: T) = append { t }
+infix fun <T> Cons<T>.append(t: T) = append { t }
 
 operator fun <T> Cons<T>.plus(t: () -> T) = append(t)
 operator fun <T> Cons<T>.plus(t: T) = append(t)
@@ -194,7 +202,7 @@ operator fun <T> Cons<T>.plus(t: T) = append(t)
 /**
  * Prepends an element to a lazy cons list.
  */
-fun <T> Cons<T>.prependTo(cons: () -> Cons<T>): Cons<T> = when (this) {
+infix fun <T> Cons<T>.prependTo(cons: () -> Cons<T>): Cons<T> = when (this) {
     Nil -> cons()
     else -> car cons { cdr.prependTo(cons) }
 }
@@ -202,7 +210,7 @@ fun <T> Cons<T>.prependTo(cons: () -> Cons<T>): Cons<T> = when (this) {
 /**
  * Prepends an element to a cons list.
  */
-fun <T> Cons<T>.prependTo(cons: Cons<T>) = prependTo { cons }
+infix fun <T> Cons<T>.prependTo(cons: Cons<T>) = prependTo { cons }
 
 /**
  * Mirror of Iterable<T>.take(i: Int): List<T>.
