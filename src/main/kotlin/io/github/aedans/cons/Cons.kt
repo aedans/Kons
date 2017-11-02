@@ -9,16 +9,16 @@ package io.github.aedans.cons
  *
  * Unlike traditional lisp cons lists, this implementation can be lazy, and by extension infinite.
  */
-interface Cons<out T> : List<T> {
+sealed class Cons<out T> : List<T> {
     /**
      * The head of the cons list.
      */
-    val car: T
+    abstract val car: T
 
     /**
      * The tail of the cons list.
      */
-    val cdr: Cons<T>
+    abstract val cdr: Cons<T>
 
     operator fun component1() = car
     operator fun component2() = cdr
@@ -92,130 +92,25 @@ interface Cons<out T> : List<T> {
 }
 
 /**
- * Abstract implementation of Cons implementing toString, equals, and hashCode.
+ * Abstract implementation of a Cons cell implementing toString, equals, and hashCode.
  */
-abstract class AbstractCons<out T> : Cons<T> {
+class Cell<out T>(
+        private val carF: () -> T,
+        private val cdrF: () -> Cons<T>
+) : Cons<T>() {
+    override val car get() = carF()
+    override val cdr get() = cdrF()
     override fun toString() = joinToString(prefix = "[", postfix = "]")
-    override fun equals(other: Any?) = other !== Nil && other is Cons<*> && other.car == car && other.cdr == cdr
+    override fun equals(other: Any?) = other is Cell<*> && other.car == car && other.cdr == cdr
     override fun hashCode() = (car?.hashCode() ?: 0).let { 31 * it + cdr.hashCode() }
 }
 
 /**
- * Creates a cons cell from receiver and cdr.
+ * The empty cons list, used as the terminator for all cons lists.
  */
-infix fun <T> T.cons(cdr: Cons<T>): Cons<T> = object : AbstractCons<T>() {
-    override val car = this@cons
-    override val cdr = cdr
-}
-
-/**
- * Creates a cons cell from receiver and cdr. cdr is evaluated lazily.
- */
-infix fun <T> T.cons(cdr: () -> Cons<T>): Cons<T> = object : AbstractCons<T>() {
-    override val car = this@cons
-    override val cdr by lazy(cdr)
-}
-
-/**
- * Creates a cons cell from receiver and cdr. Both are evaluated lazily.
- */
-infix fun <T> (() -> T).cons(cdr: () -> Cons<T>): Cons<T> = object : AbstractCons<T>() {
-    override val car by lazy(this@cons)
-    override val cdr by lazy(cdr)
-}
-
-operator fun <T> T.plus(cons: Cons<T>) = this cons cons
-operator fun <T> T.plus(cons: () -> Cons<T>) = this cons cons
-
-/**
- * Mirror of List(Int, (Int) -> T): List<T>.
- */
-fun <T> cons(size: Int, init: (Int) -> T) = run {
-    fun getCons(acc: Int): Cons<T> = when (acc) {
-        size -> Nil
-        else -> init(acc) cons { getCons(acc + 1) }
-    }
-    if (size < 0)
-        throw IllegalArgumentException("size: $size")
-    else
-        getCons(0)
-}
-
-/**
- * Mirror of generateSequence(() -> T?): Sequence<T>.
- */
-fun <T : Any> generateCons(nextFunction: () -> T?): Cons<T> = nextFunction().let {
-    when (it) {
-        null -> Nil
-        else -> it cons { generateCons(nextFunction) }
-    }
-}
-
-/**
- * Mirror of generateSequence(T?, (T) -> T?): Sequence<T>.
- */
-fun <T : Any> generateCons(seed: T?, nextFunction: (T) -> T?): Cons<T> = when (seed) {
-    null -> Nil
-    else -> seed cons { generateCons(nextFunction(seed), nextFunction) }
-}
-
-/**
- * Mirror of listOf(vararg T): List<T>.
- */
-fun <T> consOf(vararg t: T) = t.asIterable().toCons()
-fun consOf() = Nil
-
-/**
- * Mirror of emptyList(): List<T>.
- */
-fun emptyCons() = Nil
-
-/**
- * Lazily creates a cons list from an Iterable.
- */
-fun <T> Iterable<T>.toCons() = iterator().collectToCons()
-
-/**
- * Lazily creates a cons list from an Iterator.
- */
-fun <T> Iterator<T>.collectToCons(): Cons<T> = when {
-    hasNext() -> next() cons { collectToCons() }
-    else -> Nil
-}
-
-/**
- * Appends a lazy element to a cons list.
- */
-infix fun <T> Cons<T>.append(t: () -> T): Cons<T> = when (this) {
-    Nil -> t() cons Nil
-    else -> car cons { cdr.append(t) }
-}
-
-/**
- * Appends an element to a cons list.
- */
-infix fun <T> Cons<T>.append(t: T) = append { t }
-
-operator fun <T> Cons<T>.plus(t: () -> T) = append(t)
-operator fun <T> Cons<T>.plus(t: T) = append(t)
-
-/**
- * Prepends an element to a lazy cons list.
- */
-infix fun <T> Cons<T>.prependTo(cons: () -> Cons<T>): Cons<T> = when (this) {
-    Nil -> cons()
-    else -> car cons { cdr.prependTo(cons) }
-}
-
-/**
- * Prepends an element to a cons list.
- */
-infix fun <T> Cons<T>.prependTo(cons: Cons<T>) = prependTo { cons }
-
-/**
- * Mirror of Iterable<T>.take(i: Int): List<T>.
- */
-fun <T> Cons<T>.take(i: Int): Cons<T> = when (i) {
-    0 -> Nil
-    else -> car cons { cdr.take(i - 1) }
+object Nil : Cons<Nothing>() {
+    override val car get() = throw IndexOutOfBoundsException()
+    override val cdr get() = throw IndexOutOfBoundsException()
+    override fun iterator() = emptyList<Nothing>().iterator()
+    override fun toString() = "nil"
 }

@@ -6,7 +6,7 @@ val kotlinCons = project {
     name = "kotlin-cons"
     group = "io.github.aedans"
     artifactId = name
-    version = "1.2.2"
+    version = "2.0.0"
 
     dependencies {
         compile("org.jetbrains.kotlin:kotlin-runtime:1.1.2")
