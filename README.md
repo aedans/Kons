@@ -9,6 +9,7 @@ Examples
 --------
 
 ```kotlin
+// Recursively folds a list
 tailrec fun <A, R> Cons<A>.fold(r: R, fn: (R, A) -> R): R = when (this) {
     Nil -> r
     else -> cdr.fold(fn(r, car), fn)
