@@ -109,13 +109,3 @@ fun <T> Cons<T>.take(i: Int): Cons<T> = when (i) {
     0 -> Nil
     else -> ({ car } cons { cdr.take(i - 1) })
 }
-
-tailrec fun <A, R> Cons<A>.fold(r: R, fn: (R, A) -> R): R = when (this) {
-    Nil -> r
-    else -> cdr.fold(fn(r, car), fn)
-}
-
-fun <A, B> Cons<A>.map(fn: (A) -> B): Cons<B> = when (this) {
-    Nil -> Nil
-    else -> let { (x, xs) -> { fn(x) } cons { xs.map(fn) } }
-}
