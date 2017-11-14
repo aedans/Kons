@@ -75,15 +75,15 @@ sealed class Cons<out T> : List<T> {
     override fun subList(fromIndex: Int, toIndex: Int) = toList().subList(fromIndex, toIndex)
 
     override fun iterator() = object : Iterator<T> {
-        private var current = car
+        private var current = { car }
         private var next = cdr
         private var hasNext = true
         override fun hasNext() = hasNext
-        override fun next() = current.let {
+        override fun next() = current().let {
             if (next == Nil) {
                 hasNext = false
             } else {
-                current = next.car
+                current = next.car.let { { it } }
                 next = next.cdr
             }
             it

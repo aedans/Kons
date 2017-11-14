@@ -36,23 +36,12 @@ fun <T> cons(size: Int, init: (Int) -> T) = run {
         getCons(0)
 }
 
-/**
- * Mirror of generateSequence(() -> T?): Sequence<T>.
- */
-fun <T : Any> generateCons(nextFunction: () -> T?): Cons<T> = nextFunction().let {
-    when (it) {
-        null -> Nil
-        else -> it cons { generateCons(nextFunction) }
-    }
-}
+// Sequence aliases
+fun <T : Any> generateCons(nextFunction: () -> T?) = generateSequence(nextFunction).toCons()
+fun <T : Any> generateCons(seedFunction: () -> T?, nextFunction: (T) -> T?) = generateSequence(seedFunction, nextFunction).toCons()
+fun <T : Any> generateCons(seed: T?, nextFunction: (T) -> T?) = generateSequence(seed, nextFunction).toCons()
 
-/**
- * Mirror of generateSequence(T?, (T) -> T?): Sequence<T>.
- */
-fun <T : Any> generateCons(seed: T?, nextFunction: (T) -> T?): Cons<T> = when (seed) {
-    null -> Nil
-    else -> seed cons { generateCons(nextFunction(seed), nextFunction) }
-}
+fun <T> Sequence<T>.toCons() = iterator().collectToCons()
 
 /**
  * Mirror of listOf(vararg T): List<T>.
@@ -74,7 +63,10 @@ fun <T> Iterable<T>.toCons() = iterator().collectToCons()
  * Lazily creates a cons list from an Iterator.
  */
 fun <T> Iterator<T>.collectToCons(): Cons<T> = when {
-    hasNext() -> next() cons { collectToCons() }
+    hasNext() -> {
+        val it = lazy { next() };
+        { it.value } cons { it.value; collectToCons() }
+    }
     else -> Nil
 }
 
@@ -100,12 +92,4 @@ operator fun <T> Cons<T>.plus(t: T) = append(t)
 infix fun <T> Cons<T>.prependTo(cons: Cons<T>): Cons<T> = when (this) {
     Nil -> cons
     else -> ({ car } cons { cdr.prependTo(cons) })
-}
-
-/**
- * Mirror of Iterable<T>.take(i: Int): List<T>.
- */
-fun <T> Cons<T>.take(i: Int): Cons<T> = when (i) {
-    0 -> Nil
-    else -> ({ car } cons { cdr.take(i - 1) })
 }

@@ -15,11 +15,6 @@ class ListTest {
     fun size() = Assert.assertEquals((0 until 100).toCons().size, 100)
     fun take() = Assert.assertEquals((0 until 105).take(100).size, 100)
     fun cons() = Assert.assertEquals((0 until 100).toCons(), cons(100) { it })
-    fun generateCons1() = Assert.assertEquals(generateCons(0) { it + 1 }.take(100), (0 until 100).toCons())
-    fun generateCons2() = Assert.assertEquals({
-        var it = 0
-        generateCons { it++ }
-    }().take(100), (0 until 100).toCons())
     fun contains1() = Assert.assertEquals((0..100).toCons().contains(100), true)
     fun contains2() = Assert.assertEquals((0 until 100).toCons().contains(100), false)
     fun indexOf1() = Assert.assertEquals((0..100).toCons().indexOf(100), 100)
@@ -35,15 +30,10 @@ class ListTest {
 
     fun stackSafe1() = (0..10000).toCons()[10000].let {  }
     fun stackSafe2() = cons(10001) { it }[10000].let {  }
-    fun stackSafe3() = generateCons(0) { it + 1 }[10000].let {  }
-    fun stackSafe4() {
-        var it = 0
-        generateCons { it++ }[10000]
-    }
-    fun stackSafe5() = ((0 until 10000).toCons() + 10000)[10000].let {  }
-    fun stackSafe6() = (0..10000).toCons().contains(10000).let {  }
-    fun stackSafe7() = (0..10000).toCons().indexOf(10000).let {  }
-    fun stackSafe8() = (0..10000).toCons().lastIndexOf(10000).let {  }
-    fun stackSafe9() = ((0 until 10000).toCons() append 1)[10000].let {  }
-    fun stackSafe10() = ((0..10000).toCons() prependTo (0..1).toCons())[10000].let {  }
+    fun stackSafe3() = ((0 until 10000).toCons() + 10000)[10000].let {  }
+    fun stackSafe4() = (0..10000).toCons().contains(10000).let {  }
+    fun stackSafe5() = (0..10000).toCons().indexOf(10000).let {  }
+    fun stackSafe6() = (0..10000).toCons().lastIndexOf(10000).let {  }
+    fun stackSafe7() = ((0 until 10000).toCons() append 1)[10000].let {  }
+    fun stackSafe8() = ((0..10000).toCons() prependTo (0..1).toCons())[10000].let {  }
 }
