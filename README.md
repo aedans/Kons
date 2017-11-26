@@ -5,8 +5,21 @@ Kotlin Cons
 
 Kotlin linked list implementation using lazily evaluated cons cells.
 
-Examples
---------
+Gradle
+------
+
+```gradle
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'io.github.aedans:kotlin-cons:2.0.2'
+}
+```
+
+Code Samples
+------------
 
 ```kotlin
 // Recursively folds a list
