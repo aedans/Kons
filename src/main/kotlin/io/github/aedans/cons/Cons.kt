@@ -58,7 +58,7 @@ sealed class Cons<out T> : List<T> {
         containsImpl(this)
     }
 
-    override fun containsAll(elements: Collection<@UnsafeVariance T>) = elements.all(::contains)
+    override fun containsAll(elements: Collection<@UnsafeVariance T>) = elements.all(this::contains)
 
     override fun indexOf(element: @UnsafeVariance T) = run {
         tailrec fun indexOfImpl(acc: Int, cons: Cons<T>): Int = when {
@@ -85,7 +85,7 @@ sealed class Cons<out T> : List<T> {
     override fun subList(fromIndex: Int, toIndex: Int) = toList().subList(fromIndex, toIndex)
 
     override fun iterator() = object : Iterator<T> {
-        private var current = ::car
+        private var current = this@Cons::car
         private var next = cdr
         private var hasNext = true
         override fun hasNext() = hasNext

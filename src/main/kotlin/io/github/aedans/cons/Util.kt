@@ -57,7 +57,7 @@ fun <T> Sequence<T>.toCons() = iterator().collectToCons()
  */
 fun <T> Iterator<T>.collectToCons(): Cons<T> = when {
     hasNext() -> {
-        val it = lazy(::next)
+        val it = lazy(this::next)
         it::value cons { it.value; collectToCons() }
     }
     else -> Nil
@@ -68,7 +68,7 @@ fun <T> Iterator<T>.collectToCons(): Cons<T> = when {
  */
 infix fun <T> Cons<T>.append(t: () -> T): Cell<T> = when (this) {
     Nil -> t cons Nil
-    else -> ::car cons { cdr append t }
+    else -> this::car cons { cdr append t }
 }
 
 /**
@@ -84,7 +84,7 @@ operator fun <T> Cons<T>.plus(t: T) = this append t
  */
 infix fun <T> Cons<T>.prependTo(cons: Cons<T>): Cons<T> = when (this) {
     Nil -> cons
-    else -> ::car cons { cdr prependTo cons }
+    else -> this::car cons { cdr prependTo cons }
 }
 
 operator fun <T> Cons<T>.plus(cons: Cons<T>) = this prependTo cons
