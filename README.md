@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    compile 'io.github.aedans:kotlin-cons:2.1.0'
+    compile 'io.github.aedans:kotlin-cons:2.1.1'
 }
 ```
 

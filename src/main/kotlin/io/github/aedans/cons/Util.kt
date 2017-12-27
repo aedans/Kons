@@ -68,13 +68,16 @@ fun <T> Iterator<T>.collectToCons(): Cons<T> = when {
  */
 infix fun <T> Cons<T>.append(t: () -> T): Cell<T> = when (this) {
     Nil -> t cons Nil
-    else -> this::car cons { cdr append t }
+    is Cell<T> -> this::car cons { cdr append t }
 }
 
 /**
  * Appends an element to a cons list.
  */
-infix fun <T> Cons<T>.append(t: T) = this append { t }
+infix fun <T> Cons<T>.append(t: T): Cell<T> = when (this) {
+    Nil -> t cons Nil
+    is Cell<T> -> this::car cons { cdr append t }
+}
 
 operator fun <T> Cons<T>.plus(t: () -> T) = this append t
 operator fun <T> Cons<T>.plus(t: T) = this append t
@@ -84,7 +87,7 @@ operator fun <T> Cons<T>.plus(t: T) = this append t
  */
 infix fun <T> Cons<T>.prependTo(cons: Cons<T>): Cons<T> = when (this) {
     Nil -> cons
-    else -> this::car cons { cdr prependTo cons }
+    is Cell<T> -> this::car cons { cdr prependTo cons }
 }
 
 operator fun <T> Cons<T>.plus(cons: Cons<T>) = this prependTo cons
