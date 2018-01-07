@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    compile 'io.github.aedans:kotlin-cons:2.1.1'
+    compile 'io.github.aedans:kotlin-cons:3.0.0'
 }
 ```
 
@@ -25,19 +25,19 @@ Code Samples
 // Recursively folds a list
 tailrec fun <A, R> Cons<A>.fold(r: R, fn: (R, A) -> R): R = when (this) {
     Nil -> r
-    is Cell<A> -> cdr.fold(fn(r, car), fn)
+    is Cell -> cdr.fold(fn(r, car), fn) // car and cdr are smart cast from nullable to non-nullable
 }
 
 // Lazily filters a list
 tailrec fun <T> Cons<T>.filter(fn: (T) -> Boolean): Cons<T> = when (this) {
     Nil -> Nil
-    is Cell<A> -> if (fn(car)) ::car cons { cdr.filter(fn) } else cdr.filter(fn)
+    is Cell -> if (fn(car)) lazyCar cons later { cdr.filter(fn) } else cdr.filter(fn)
 }
 
-// Stack safe due to lazy evaluation
-fun <A, B> Cons<A>.map(fn: (A) -> B): Cons<B> = when (this) {
-    Nil -> Nil
-    is Cell<A> -> let { (x, xs) -> { fn(x) } cons { xs.map(fn) } }
+// Stack safe due to Eval
+fun <A, B> Cons<A>.map(fn: (A) -> B): Eval<Cons<B>> = when (this) {
+    Nil -> Eval.Nil
+    is Cell -> now(later { fn(car) } cons defer { cdr.map(fn) })
 }
 
 // List of all natural numbers

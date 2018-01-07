@@ -5,7 +5,7 @@ import org.testng.annotations.Test
 
 @Test
 class ListTest {
-    fun toCons() = assertEquals((0..10000).toCons().eval().toList(), (0..10000).toList())
+    fun toCons1() = assertEquals((0..10000).toCons().eval().toList(), (0..10000).toList())
     fun toStringT() = assertEquals((0..10000).toCons().toString(), (0..10000).toList().toString())
     fun consOf1() = assertEquals(consOf(1, 2, 3), 1 cons (2 cons (3 cons Nil)))
     fun consOf2() = assertEquals(consOf(), Nil)
@@ -15,6 +15,7 @@ class ListTest {
     fun indexOf1() = assertEquals((0..10000).toCons().indexOf(10000), 10000)
     fun indexOf2() = assertEquals((0 until 10000).toCons().indexOf(10000), -1)
     fun append() = assertEquals((0..10000).toCons().eval(), ((0 until 10000).toCons() append 10000).eval())
+//    fun append2() = assertEquals((1..10000).fold(consOf(0)) { a, b -> a append b }.eval(), (0..10000).toCons())
     fun prepend() = assertEquals((0..10000).toCons().eval(), ((0..5000).toCons() prependTo (5001..10000).toCons()).eval())
 
     private fun <T> Cons<T>.eval() = this[10000].let { this }
