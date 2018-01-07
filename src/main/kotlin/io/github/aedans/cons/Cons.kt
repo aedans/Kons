@@ -34,13 +34,14 @@ sealed class Cons<out T> : List<T> {
     val unsafeCar get() = car ?: throw IndexOutOfBoundsException()
     val unsafeCdr get() = cdr ?: throw IndexOutOfBoundsException()
 
-    override val size get() = run {
-        tailrec fun sizeImpl(acc: Int, cons: Cons<T>): Int = when (cons) {
-            Nil -> acc
-            is Cell -> sizeImpl(acc + 1, cons.cdr)
+    override val size
+        get() = run {
+            tailrec fun sizeImpl(acc: Int, cons: Cons<T>): Int = when (cons) {
+                Nil -> acc
+                is Cell -> sizeImpl(acc + 1, cons.cdr)
+            }
+            sizeImpl(0, this)
         }
-        sizeImpl(0, this)
-    }
 
     override operator fun get(index: Int) = run {
         tailrec fun Cons<T>.getImpl(i: Int): T = when (i) {
@@ -85,10 +86,12 @@ sealed class Cons<out T> : List<T> {
     override fun listIterator(index: Int) = toList().listIterator(index)
     override fun subList(fromIndex: Int, toIndex: Int) = toList().subList(fromIndex, toIndex)
 
-    override fun iterator() = object : Iterator<T> {
-        private var next = this@Cons
-        override fun hasNext() = next.isNotEmpty()
-        override fun next() = next.unsafeCar.also { next = next.unsafeCdr }
+    override fun iterator() = run {
+        var next = this@Cons
+        object : Iterator<T> {
+            override fun hasNext() = next != Nil
+            override fun next() = next.unsafeCar.also { next = next.unsafeCdr }
+        }
     }
 }
 

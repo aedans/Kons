@@ -4,7 +4,7 @@ import arrow.core.Eval
 import arrow.core.Eval.Companion.defer
 import arrow.core.Eval.Companion.later
 import arrow.core.Eval.Companion.now
-import kotlin.coroutines.experimental.buildSequence
+import kotlin.coroutines.experimental.*
 
 typealias NonEmptyList<T> = Nel<T>
 typealias Nel<T> = Cell<T>
@@ -60,7 +60,7 @@ fun emptyCons(): Nil = Nil
 fun <T> Iterable<T>.toCons(): Cons<T> = iterator().collectToCons()
 
 /**
- * Lazily creates a cons list from a sequence.
+ * Lazily creates a cons list from a Sequence.
  */
 fun <T> Sequence<T>.toCons(): Cons<T> = iterator().collectToCons()
 
@@ -111,3 +111,9 @@ operator fun <T> Cons<T>.plus(cons: Cons<T>) = this prependTo cons
 private val EvalNil = now(Nil)
 @Suppress("unused", "PropertyName")
 val Eval.Companion.Nil get() = EvalNil
+
+fun main(args: Array<String>) {
+    fun test(i: Int): Cons<Int> = i cons later { test(i + 1) }
+    val iterator = test(0).iterator()
+    iterator.forEach { if (it % 10000 == 0) println(it) }
+}
