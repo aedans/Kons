@@ -1,4 +1,4 @@
-package io.github.aedans.cons
+package io.github.aedans.kons
 
 import org.testng.Assert.assertEquals
 import org.testng.annotations.Test
@@ -14,9 +14,8 @@ class ListTest {
     fun contains2() = assertEquals((0 until 10000).toCons().contains(10000), false)
     fun indexOf1() = assertEquals((0..10000).toCons().indexOf(10000), 10000)
     fun indexOf2() = assertEquals((0 until 10000).toCons().indexOf(10000), -1)
-    fun append() = assertEquals((0..10000).toCons().eval(), ((0 until 10000).toCons() append 10000).eval())
-//    fun append2() = assertEquals((1..10000).fold(consOf(0)) { a, b -> a append b }.eval(), (0..10000).toCons())
-    fun prepend() = assertEquals((0..10000).toCons().eval(), ((0..5000).toCons() prependTo (5001..10000).toCons()).eval())
+    fun plus1() = assertEquals((0..10000).toCons().eval(), ((0 until 10000).toCons() + 10000).eval())
+    fun plus2() = assertEquals((0..10000).toCons().eval(), ((0..5000).toCons() + (5001..10000).toCons()).eval())
 
     private fun <T> Cons<T>.eval() = this[10000].let { this }
 

@@ -1,4 +1,4 @@
-package io.github.aedans.cons
+package io.github.aedans.kons
 
 import arrow.core.Eval
 import arrow.core.Eval.Companion.later
@@ -84,7 +84,7 @@ sealed class Cons<out T> : List<T> {
 
     override fun listIterator() = toList().listIterator()
     override fun listIterator(index: Int) = toList().listIterator(index)
-    override fun subList(fromIndex: Int, toIndex: Int) = toList().subList(fromIndex, toIndex)
+    override fun subList(fromIndex: Int, toIndex: Int) = toList().subList(fromIndex, toIndex).toCons()
 
     override fun iterator() = run {
         var next = this@Cons

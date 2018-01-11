@@ -1,7 +1,7 @@
-Kotlin Cons
-===========
+Kons
+====
 
-[![Download](https://api.bintray.com/packages/aedans/maven/kotlin-cons/images/download.svg)](https://bintray.com/aedans/maven/kotlin-cons/_latestVersion) 
+[![Download](https://api.bintray.com/packages/aedans/maven/kons/images/download.svg)](https://bintray.com/aedans/maven/kons/_latestVersion) 
 
 [Kotlin](http://kotlinlang.org) linked list implementation using lazily evaluated cons cells.
 
@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    compile 'io.github.aedans:kotlin-cons:$kotlin_cons_version'
+    compile 'io.github.aedans:kons:$kons_version'
 }
 ```
 
